@@ -1,1 +1,21 @@
+document.getElementById("calcBtn").addEventListener("click", function() {
+  let salary = parseFloat(document.getElementById("salary").value);
+  let years = parseFloat(document.getElementById("years").value);
+  let gratuity = 0;
+
+  if (isNaN(salary) || isNaN(years) || salary <= 0 || years <= 0) {
+    document.getElementById("result").innerText = "Please enter valid numbers.";
+    return;
+  }
+
+  if (years < 1) {
+    gratuity = 0;
+  } else if (years <= 5) {
+    gratuity = (salary / 30) * 21 * years;
+  } else {
+    gratuity = ((salary / 30) * 21 * 5) + ((salary / 30) * 30 * (years - 5));
+  }
+
+  document.getElementById("result").innerText = "Your gratuity is: AED " + gratuity.toFixed(2);
+});
 
