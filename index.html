@@ -2,100 +2,166 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UAE Gratuity Calculator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f6f9;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+      margin: 40px;
+      background-color: #f5f5f5;
+      color: #333;
     }
     .calculator {
-      background: #fff;
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
       max-width: 400px;
-      width: 100%;
+      padding: 20px;
+      background-color: #fff;
+      margin: auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    h2 {
+    .calculator h2 {
       text-align: center;
-      color: #333;
       margin-bottom: 20px;
     }
-    label {
-      font-weight: bold;
-      display: block;
-      margin: 10px 0 5px;
+    .form-group {
+      margin-bottom: 15px;
     }
-    input {
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .btn {
+      display: block;
       width: 100%;
       padding: 10px;
-      margin-bottom: 15px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #007BFF;
+      background-color: #0072c6;
+      color: white;
       border: none;
-      color: #fff;
-      font-size: 16px;
-      border-radius: 8px;
+      border-radius: 4px;
       cursor: pointer;
+      font-size: 16px;
     }
-    button:hover {
-      background: #0056b3;
+    .btn:hover {
+      background-color: #005fa3;
     }
     .result {
       margin-top: 20px;
-      font-size: 18px;
+      padding: 15px;
+      background-color: #e9f7ef;
+      border: 1px solid #c3e6cb;
+      border-radius: 4px;
+      color: #155724;
+    }
+    .links {
+      margin-top: 30px;
+      font-size: 14px;
       text-align: center;
-      font-weight: bold;
-      color: #007BFF;
+    }
+    .links a {
+      color: #0072c6;
+      text-decoration: none;
+    }
+    .links a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
+
   <div class="calculator">
     <h2>UAE Gratuity Calculator</h2>
-    <label for="salary">Basic Monthly Salary (AED):</label>
-    <input type="number" id="salary" placeholder="Enter your salary" required>
+    <div class="form-group">
+      <label for="basicSalary">Basic Salary (AED/month)</label>
+      <input type="number" id="basicSalary" placeholder="Enter your basic salary" min="0">
+    </div>
+    <div class="form-group">
+      <label for="yearsService">Years of Service</label>
+      <input type="number" id="yearsService" placeholder="Enter years of service" min="0" step="0.1">
+    </div>
+    <div class="form-group">
+      <label for="contractType">Contract Type</label>
+      <select id="contractType">
+        <option value="limited">Limited Contract</option>
+        <option value="unlimited">Unlimited Contract</option>
+      </select>
+    </div>
+    <button class="btn" id="calculateBtn">Calculate Gratuity</button>
 
-    <label for="years">Years of Service:</label>
-    <input type="number" id="years" placeholder="Enter years worked" required>
+    <div class="result" id="result" style="display:none;">
+      <strong>Gratuity Payable: AED <span id="gratAmount">0.00</span></strong>
+    </div>
 
-    <button onclick="calculateGratuity()">Calculate Gratuity</button>
-    <div class="result" id="result"></div>
+    <div class="links">
+      <p>Useful links:</p>
+      <p>
+        <a href="https://sites.google.com/view/uae-gratuity-calculator-mohre/home" target="_blank">
+          UAE Gratuity Calculator (MOHRE)
+        </a><br>
+        <a href="https://github.com/gulzar-abbas" target="_blank">GitHub - Gulzar Abbas</a><br>
+        <a href="https://github.com/gulzar-abbas/uae-gratuity-calculator" target="_blank">
+          GitHub - UAE Gratuity Calculator Project
+        </a>
+      </p>
+    </div>
   </div>
 
   <script>
-    function calculateGratuity() {
-      let salary = parseFloat(document.getElementById('salary').value);
-      let years = parseFloat(document.getElementById('years').value);
-      let gratuity = 0;
+    document.getElementById('calculateBtn').addEventListener('click', function() {
+      const basic = parseFloat(document.getElementById('basicSalary').value);
+      const years = parseFloat(document.getElementById('yearsService').value);
+      const contractType = document.getElementById('contractType').value;
 
-      if (isNaN(salary) || isNaN(years) || salary <= 0 || years <= 0) {
-        document.getElementById('result').innerText = "Please enter valid numbers.";
+      if (isNaN(basic) || basic <= 0) {
+        alert('Please enter a valid basic salary.');
+        return;
+      }
+      if (isNaN(years) || years <= 0) {
+        alert('Please enter valid years of service.');
         return;
       }
 
+      let gratuity = 0;
+
+      // UAE Labor Law rules (general guideline)
+      // After 1 year up to 5 years: 21 days salary for each year
+      // After 5 years: 30 days salary for each additional year beyond 5, but total should not exceed 2 years' salary
+      // For unlimited contract: when service ends after probation etc.
+
       if (years < 1) {
-        gratuity = 0;
+        gratuity = 0; // usually no gratuity if under 1 year
       } else if (years <= 5) {
-        gratuity = (salary / 30) * 21 * years;
+        gratuity = basic * (years * 21 / 30);
       } else {
-        gratuity = ((salary / 30) * 21 * 5) + ((salary / 30) * 30 * (years - 5));
+        // first 5 years
+        const firstPart = basic * (5 * 21 / 30);
+        // remaining years
+        const remainingYears = years - 5;
+        const secondPart = basic * (remainingYears * 30 / 30);
+        gratuity = firstPart + secondPart;
       }
 
-      document.getElementById('result').innerText = "Your gratuity is: AED " + gratuity.toFixed(2);
-    }
+      // For unlimited contract early leave, or termination terms:
+      // you may add more conditions depending on contractType
+      // (for simplicity, we are using same rules)
+
+      gratuity = Math.min(gratuity, 2 * basic); // not more than 2 years’ wage
+
+      document.getElementById('gratAmount').textContent = gratuity.toFixed(2);
+      document.getElementById('result').style.display = 'block';
+    });
   </script>
+
 </body>
 </html>
-
-
