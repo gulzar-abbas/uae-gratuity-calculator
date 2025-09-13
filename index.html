@@ -4,23 +4,98 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UAE Gratuity Calculator</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .calculator {
+      background: #fff;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #007BFF;
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+      text-align: center;
+      font-weight: bold;
+      color: #007BFF;
+    }
+  </style>
 </head>
 <body>
   <div class="calculator">
     <h2>UAE Gratuity Calculator</h2>
-
     <label for="salary">Basic Monthly Salary (AED):</label>
     <input type="number" id="salary" placeholder="Enter your salary" required>
 
     <label for="years">Years of Service:</label>
     <input type="number" id="years" placeholder="Enter years worked" required>
 
-    <button id="calcBtn">Calculate Gratuity</button>
+    <button onclick="calculateGratuity()">Calculate Gratuity</button>
     <div class="result" id="result"></div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    function calculateGratuity() {
+      let salary = parseFloat(document.getElementById('salary').value);
+      let years = parseFloat(document.getElementById('years').value);
+      let gratuity = 0;
+
+      if (isNaN(salary) || isNaN(years) || salary <= 0 || years <= 0) {
+        document.getElementById('result').innerText = "Please enter valid numbers.";
+        return;
+      }
+
+      if (years < 1) {
+        gratuity = 0;
+      } else if (years <= 5) {
+        gratuity = (salary / 30) * 21 * years;
+      } else {
+        gratuity = ((salary / 30) * 21 * 5) + ((salary / 30) * 30 * (years - 5));
+      }
+
+      document.getElementById('result').innerText = "Your gratuity is: AED " + gratuity.toFixed(2);
+    }
+  </script>
 </body>
 </html>
+
 
